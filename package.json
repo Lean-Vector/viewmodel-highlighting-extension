@@ -1,0 +1,77 @@
+{
+  "name": "@eligo-public/viewmodel-highlighting-extension",
+  "displayName": "ViewModel Highlighting & Formatter",
+  "description": "Syntax highlighting and VSCode-style formatting for .viewmodel (dotjs/express-dot-engine) template files with JavaScript and [[...]] blocks.",
+  "version": "1.0.0",
+  "publisher": "mihai-slobozeanu",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onLanguage:viewmodel"
+  ],
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "viewmodel",
+        "aliases": [
+          "ViewModel Template",
+          "viewmodel"
+        ],
+        "extensions": [
+          ".viewmodel"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "viewmodel",
+        "scopeName": "source.viewmodel",
+        "path": "./syntaxes/viewmodel.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "title": "ViewModel Formatter",
+      "properties": {
+        "viewmodelFormatter.printWidth": {
+          "type": "number",
+          "default": 120,
+          "description": "Maximum line width for formatting ViewModel blocks."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -p ./"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.75.0"
+  },
+  "dependencies": {
+    "prettier": "^3.2.5"
+  },
+  "keywords": [
+    "viewmodel",
+    "javascript",
+    "templating",
+    "highlighting",
+    "formatter"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Lean-Vector/viewmodel-highlighting-extension"
+  },
+  "bugs": {
+    "url": "https://github.com/Lean-Vector/viewmodel-highlighting-extension/issues"
+  },
+  "homepage": "https://github.com/Lean-Vector/viewmodel-highlighting-extension",
+  "icon": "icon.png"
+}

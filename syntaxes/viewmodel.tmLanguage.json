@@ -1,0 +1,9 @@
+{
+  "scopeName": "source.viewmodel",
+  "patterns": [
+    { "include": "source.js" }
+  ],
+  "injections": {},
+  "repository": {},
+  "name": "ViewModel"
+}
