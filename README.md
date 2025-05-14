@@ -10,7 +10,7 @@
 - JavaScript-aware formatting using VSCode’s built-in formatter
 - Preserves original structure: semicolons, blank lines, `var` declarations, etc.
 - Supports `[[ ... ]]` and `[[= ... ]]` templating placeholders
-- Only formats the content of selected blocks: `body`, `declarations`, `methods`, `functions`
+- Only formats the content of selected blocks: `header`, `body`, `declarations`
 
 ---
 
@@ -19,12 +19,12 @@
 ```viewmodel
 [[##body:
     createProperties: function () {
-        var self = this;
+        const self = this;
         self.superclass.createProperties.apply(self, arguments);
     },
 
     selectItems: function(){
-        var itemRoute = [[= JSON.stringify(getRoute()) ]];
+        const itemRoute = [[= JSON.stringify(getRoute()) ]];
     }
 #]]
 ```
