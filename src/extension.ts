@@ -42,25 +42,34 @@ export function activate(context: vscode.ExtensionContext) {
 
                     if (!allowedBlocks.includes(blockName)) continue;
 
-                    const startOffset = match.index + match[0].indexOf(blockContent);
-                    const endOffset = startOffset + blockContent.length;
-                    const start = e.document.positionAt(startOffset);
-                    const end = e.document.positionAt(endOffset);
-                    const range = new vscode.Range(start, end);
+                    const startOffset = match.index + match[0].indexOf(blockContent),
+                        endOffset = startOffset + blockContent.length,
+                        start = e.document.positionAt(startOffset),
+                        end = e.document.positionAt(endOffset),
+                        range = new vscode.Range(start, end);
 
-                    const leadingNewline = /^\s*\n/.test(blockContent) ? "\n" : "";
-                    const trailingNewline = /\n\s*$/.test(blockContent) ? "\n" : "";
+                    const leadingNewline = /^\s*\n/.test(blockContent) ? "\n" : "",
+                        trailingNewline = /\n\s*$/.test(blockContent) ? "\n" : "";
 
-                    const templateRegex = /\[\[(=)?([\s\S]*?)\]\]/g;
-                    const templates: string[] = [];
-                    const sanitized = blockContent
-                        .replace(templateRegex, (_, eq, expr) => {
-                            const key = `__TEMPLATE_${templates.length}__`;
-                            templates.push(`[[${eq || ''}${expr}]]`);
-                            return key;
-                        })
-                        // new lines
-                        .replace(/\r\n/g, '\n');
+                    const templateRegex = /\[\[=([\s\S]*?)\]\]/g,
+                        lineTemplateRegex = /^.*\[\[(?!\=)[\s\S]*?\]\].*$/gm,
+                        templates: string[] = [],
+                        lineTemplates: string[] = [],
+                        sanitized = blockContent
+                            // Replace evaluated expressions like [[= ... ]]
+                            .replace(templateRegex, (_, expr) => {
+                                const key = `__TEMPLATE_${templates.length}__`;
+                                templates.push(`[[=${expr}]]`);
+                                return key;
+                            })
+                            // Replace lines that are only [[ ... ]] (non-evaluated) with protected placeholders
+                            .replace(lineTemplateRegex, (line) => {
+                                const key = `__TEMPLATE_LINE_${lineTemplates.length}__`;
+                                lineTemplates.push(line);
+                                return key;
+                            })
+                            // new lines
+                            .replace(/\r\n/g, '\n');
 
                     const strategy = blockFormatStrategy[blockName] || 'object';
                     let wrapperStart = '', wrapperEnd = '';
@@ -100,8 +109,12 @@ export function activate(context: vscode.ExtensionContext) {
 
                     let unwrapped = formatted.slice(wrapperStart.length, formatted.length - wrapperEnd.length);
                     templates.forEach((original, i) => {
-                        const key = `__TEMPLATE_${i}__`;
-                        unwrapped = unwrapped.replace(new RegExp(key, 'g'), original);
+                        const regex = new RegExp(`__TEMPLATE_${i}__`, 'g');
+                        unwrapped = unwrapped.replace(regex, original);
+                    });
+                    lineTemplates.forEach((original, i) => {
+                        const lineRegex = new RegExp(`^.*__TEMPLATE_LINE_${i}__.*$`, 'gm');
+                        unwrapped = unwrapped.replace(lineRegex, original);
                     });
 
                     edits.push(new vscode.TextEdit(range, `${leadingNewline}${unwrapped.trimEnd()}${trailingNewline}`));
