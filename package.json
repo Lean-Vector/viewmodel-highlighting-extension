@@ -2,7 +2,7 @@
   "name": "viewmodel-highlighting-extension",
   "displayName": "ViewModel Highlighting & Formatter",
   "description": "Syntax highlighting and VSCode-style formatting for .viewmodel (dotjs/express-dot-engine) template files with JavaScript and [[...]] blocks.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "publisher": "mihai-slobozeanu",
   "engines": {
     "vscode": "^1.75.0"
@@ -48,7 +48,10 @@
   },
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
-    "compile": "tsc -p ./"
+    "watch": "tsc -watch -p ./",
+    "compile": "tsc -p ./",
+    "build": "npm run compile; vsce package;",
+    "install": "npm run build; code --install-extension viewmodel-highlighting-extension-1.0.3.vsix"
   },
   "devDependencies": {
     "typescript": "^5.0.0",

@@ -11,6 +11,7 @@
     "module": "commonjs",
     "rootDir": "src",
     "outDir": "out",
+    "sourceMap": true,
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true
